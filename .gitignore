@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Shell
+*.swp
+*~
+
+# Backup
+*.bak
+*.old
+
+# Misc
+.env
