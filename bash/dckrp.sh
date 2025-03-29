@@ -26,12 +26,13 @@ done_msg() {
 case "$1" in
   help|--help|-h)
     echo -e "${YELLOW}dckrp: Available commands:${NC}"
-    echo -e "  ${GREEN}dckrp ls${NC}            – list all Docker containers"
-    echo -e "  ${GREEN}dckrp up${NC}            – build & start Docker Compose project in current directory"
-    echo -e "  ${GREEN}dckrp down${NC}          – stop and remove containers"
-    echo -e "  ${GREEN}dckrp logs <name>${NC}   – follow logs of the specified container"
-    echo -e "  ${GREEN}dckrp clean${NC}         – safe environment cleanup (without volumes)"
-    echo -e "  ${GREEN}dckrp help${NC}          – show this help"
+    echo -e "  ${GREEN}dckrp ls${NC}                 – list all Docker containers"
+    echo -e "  ${GREEN}dckrp up${NC}                 – build & start Docker Compose project in current directory"
+    echo -e "  ${GREEN}dckrp down${NC}               – stop and remove containers"
+    echo -e "  ${GREEN}dckrp logs <name>${NC}        – follow logs of the specified container"
+    echo -e "  ${GREEN}dckrp exec <name> [cmd]${NC}  – execute command (default: /bin/bash) inside container"
+    echo -e "  ${GREEN}dckrp clean${NC}              – safe environment cleanup (without volumes)"
+    echo -e "  ${GREEN}dckrp help${NC}               – show this help"
     echo ""
     ;;
 
@@ -65,6 +66,19 @@ case "$1" in
     docker network prune --force
     docker builder prune --force
     done_msg
+    ;;
+    
+  exec)
+    if [ -z "$2" ]; then
+      echo -e "${YELLOW}Please specify a container name: dckrp exec <name> [command]${NC}\n"
+    else
+      container="$2"
+      shift 2
+      cmd="${*:-/bin/bash}"
+      echo -e "${GREEN}Running '${cmd}' inside container '${container}'...${NC}"
+      docker exec -ti "$container" $cmd
+      echo ""
+    fi
     ;;
 
   ls)
