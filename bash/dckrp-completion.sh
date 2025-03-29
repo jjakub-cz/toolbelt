@@ -11,24 +11,31 @@
 # -----------------------------------------------------------------------------
 
 _dckrp_completions() {
-  local cur prev opts containers
+  local cur prev words opts containers
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="up down logs clean help ls exec"
+  opts="up down logs clean help ls exec images"
 
-  # If first argument, suggest subcommands
+  # Main command completion
   if [[ $COMP_CWORD -eq 1 ]]; then
     COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
     return 0
   fi
 
-  # If logs or exec, suggest running containers
+  # Completion for 'logs' and 'exec' → container names
   if [[ "$prev" == "logs" || "$prev" == "exec" ]]; then
     containers=$(docker ps --format '{{.Names}}')
     COMPREPLY=( $(compgen -W "${containers}" -- "${cur}") )
     return 0
   fi
+
+  # Completion for 'images' → --clean
+  if [[ "${COMP_WORDS[1]}" == "images" && $COMP_CWORD -eq 2 ]]; then
+    COMPREPLY=( $(compgen -W "--clean" -- "${cur}") )
+    return 0
+  fi
 }
 
 complete -F _dckrp_completions dckrp
+

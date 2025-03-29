@@ -11,9 +11,11 @@ A lightweight CLI wrapper around common Docker Compose commands. Has a _completi
 
 #### Features:
 - `dckrp` – list all containers (`docker ps -a`)
+- `dckrp images [--clean]` - show image stats, optionally clean dangling images
 - `dckrp up` – build and start the Compose project in the current directory
 - `dckrp down` – stop and remove containers
 - `dckrp logs <container>` – stream logs from a container
+- `dckrp exec <container> [cmd]` - execute command (default: /bin/bash) inside container
 - `dckrp clean` – safely clean up unused containers, images, networks
 - `dckrp help` – display help menu
 

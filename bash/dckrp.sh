@@ -27,6 +27,7 @@ case "$1" in
   help|--help|-h)
     echo -e "${YELLOW}dckrp: Available commands:${NC}"
     echo -e "  ${GREEN}dckrp ls${NC}                 – list all Docker containers"
+    echo -e "  ${GREEN}dckrp images [--clean]${NC}   – show image stats, optionally clean only dangling images"
     echo -e "  ${GREEN}dckrp up${NC}                 – build & start Docker Compose project in current directory"
     echo -e "  ${GREEN}dckrp down${NC}               – stop and remove containers"
     echo -e "  ${GREEN}dckrp logs <name>${NC}        – follow logs of the specified container"
@@ -85,6 +86,34 @@ case "$1" in
     echo -e "${GREEN}Listing all containers:${NC}"
     docker ps -a
     echo ""
+    ;;
+
+  images)
+    echo -e "${GREEN}📦 Docker Images Overview:${NC}"
+    echo ""
+
+    # Header
+    printf "%-30s %-15s %-12s %-20s %-10s\n" "IMAGE" "SIZE" "IMAGE ID" "CREATED" "STATUS"
+    printf "%-30s %-15s %-12s %-20s %-10s\n" "------------------------------" "---------------" "------------" "--------------------" "----------"
+
+    docker images --format '{{.Repository}}:{{.Tag}}|{{.Size}}|{{.ID}}|{{.CreatedSince}}' \
+    | while IFS='|' read -r name size id created; do
+      if [[ "$name" == "<none>:<none>" ]]; then
+        printf "${YELLOW}%-30s %-15s %-12s %-20s %-10s${NC}\n" "[DANGLING]" "$size" "$id" "$created" "dangling"
+      else
+        printf "%-30s %-15s %-12s %-20s %-10s\n" "$name" "$size" "$id" "$created" "ok"
+      fi
+    done | sort -k2 -h
+
+    echo ""
+
+    if [[ "$2" == "--clean" ]]; then
+      echo -e "${RED}🗑️  Removing dangling images...${NC}"
+      docker image prune --force
+      done_msg
+    else
+      done_msg
+    fi
     ;;
 
   *)
