@@ -7,7 +7,7 @@ This folder contains various Bash scripts for Linux/macOS environments.
 ## 📜 Available Scripts
 
 ### `dckrp.sh`
-A lightweight CLI wrapper around common Docker Compose commands.
+A lightweight CLI wrapper around common Docker Compose commands. Has a _completion_ as well.
 
 #### Features:
 - `dckrp` – list all containers (`docker ps -a`)
@@ -23,6 +23,13 @@ Make the script executable and optionally create an alias:
 chmod +x dckrp.sh
 alias dckrp="/path/to/dckrp.sh"
 ```
+
+#### Completion:
+Add to your `.bashrc` following line:
+```bash
+source /path-to-completion-script/dckrp-completion.sh
+```
+...and simply reload your `.bashrc` with `source ~/.bashrc`.
 
 &nbsp;
 
