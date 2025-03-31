@@ -84,7 +84,7 @@ case "$1" in
 
   ls)
     echo -e "${GREEN}Listing all containers:${NC}"
-    docker ps -a
+    docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
     echo ""
     ;;
 
