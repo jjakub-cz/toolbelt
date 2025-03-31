@@ -15,7 +15,7 @@ _dckrp_completions() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="up down logs clean help ls exec images"
+  opts="up down restart logs clean help ls exec images"
 
   # Main command completion
   if [[ $COMP_CWORD -eq 1 ]]; then
