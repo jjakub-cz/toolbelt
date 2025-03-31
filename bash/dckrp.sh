@@ -30,6 +30,7 @@ case "$1" in
     echo -e "  ${GREEN}dckrp images [--clean]${NC}   – show image stats, optionally clean only dangling images"
     echo -e "  ${GREEN}dckrp up${NC}                 – build & start Docker Compose project in current directory"
     echo -e "  ${GREEN}dckrp down${NC}               – stop and remove containers"
+    echo -e "  ${GREEN}dckrp restart${NC}            – runs compose down && compose up in one command"
     echo -e "  ${GREEN}dckrp logs <name>${NC}        – follow logs of the specified container"
     echo -e "  ${GREEN}dckrp exec <name> [cmd]${NC}  – execute command (default: /bin/bash) inside container"
     echo -e "  ${GREEN}dckrp clean${NC}              – safe environment cleanup (without volumes)"
@@ -46,6 +47,12 @@ case "$1" in
   down)
     echo -e "${RED}Stopping docker compose...${NC}"
     docker compose down
+    done_msg
+    ;;
+
+  restart)
+    echo -e "${RED}Restarting...${NC}"
+    docker compose down && docker compose up -d --no-deps --build --force-recreate
     done_msg
     ;;
 
