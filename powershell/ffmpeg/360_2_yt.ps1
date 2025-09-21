@@ -229,6 +229,7 @@ try {
 
     # --- Inject 360° XMP metadata via exiftool (in-place) --------------------------
     $exifArgs = @(
+        '-api', 'LargeFileSupport=1',
         '-overwrite_original',
         '-XMP-GSpherical:Spherical=true',
         '-XMP-GSpherical:Stitched=true',
