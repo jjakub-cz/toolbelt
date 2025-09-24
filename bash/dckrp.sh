@@ -68,6 +68,7 @@ case "$1" in
 
   clean)
     echo -e "${YELLOW}Cleaning up Docker environment...${NC}"
+
     echo -e "${YELLOW}Removing compose orphans...${NC}"
     docker compose down --remove-orphans
     done_msg
