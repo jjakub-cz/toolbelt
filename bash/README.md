@@ -18,6 +18,8 @@ Handy when you need to paste multiple files into AI for example :-)
 * Example:
     * `fconcat.sh -o dump.txt -i .git,node_modules,dist src/`
 
+&nbsp;
+
 ### `dckrp.sh`
 A lightweight CLI wrapper around common Docker Compose commands. Has a _completion_ as well.
 
@@ -44,6 +46,12 @@ A lightweight CLI wrapper around common Docker Compose commands. Has a _completi
         source /path-to-completion-script/dckrp-completion.sh
         ```
     * ...and simply reload your `.bashrc` with `source ~/.bashrc`.
+
+&nbsp;
+
+### `http-security-txt-check.sh`
+
+Validate a site's [security.txt](https://www.rfc-editor.org/rfc/rfc9116.html) file according to RFC 9116.
 
 &nbsp;
 
