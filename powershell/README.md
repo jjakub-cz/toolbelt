@@ -6,9 +6,11 @@ This folder contains various Powershell scripts for Windows.
 
 ## 📜 Available Scripts
 
+### `/ssh-connect/`
+* Quick powershell shortcut for SSH connections.
+
 ### `/ffmpeg/`
 * Various tools that uses `ffmpeg`.
-
 
 ### `/scheduler-job-execution/`
 * Solution for running powershell jobs with logging.
@@ -16,7 +18,7 @@ This folder contains various Powershell scripts for Windows.
 ### `/http-in-loop.ps1`
 * For cases where it is necessary to repeat HTTP call in a loop to process some (for example database data) by HTTP endpoint.
 
-### `media-name-normalize.ps1`
+### `/media-name-normalize.ps1`
 * Tries to rename media files to more standardized output. More in script comments.
 
 
