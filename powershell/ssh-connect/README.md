@@ -4,6 +4,12 @@ Very simple and not at all perfect script, that makes easy handling of SSH conne
 
 &nbsp;
 
+## Changelog
+
+* 2026-01-19
+   * added menu support
+   * change of hotkeys and keyboard shortcuts
+
 ## How to run
 
 Simply run powershell script from current folder and pick your favorite connection.

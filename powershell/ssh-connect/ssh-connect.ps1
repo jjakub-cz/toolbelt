@@ -18,18 +18,15 @@ Get-Content $sshConfigPath | ForEach-Object {
         return
     }
 
-    # Category: "# [prod]"
     if ($line -match "^#\s*\[(.+?)\]") {
         $currentCategory = $matches[1]
         return
     }
 
-    # skip comments
     if ($line.StartsWith("#")) {
         return
     }
 
-    # Host definition
     if ($line -like "Host *") {
         $parts = $line -split "\s+" | Select-Object -Skip 1
 
@@ -49,50 +46,110 @@ if ($entries.Count -eq 0) {
     exit 0
 }
 
-# --- Menu ---
-Write-Host ""
-Write-Host "Avaliable SSH connections:" -ForegroundColor Cyan
-Write-Host "---------------------"
+function Read-MenuInput {
+    param(
+        [hashtable]$Map,
+        [switch]$AllowBack
+    )
 
-$index = 1
-$indexMap = @{}
+    $buffer = ""
 
-$entries | Group-Object Category | ForEach-Object {
-    Write-Host ""
-    Write-Host ("[{0}]" -f $_.Name) -ForegroundColor Yellow
+    while ($true) {
+        $key = [Console]::ReadKey($true)
 
-    foreach ($item in $_.Group) {
-        Write-Host ("  [{0}] {1}" -f $index, $item.Name)
-        $indexMap[$index] = $item.Name
-        $index++
+        switch ($key.Key) {
+
+            'Escape' {
+                Write-Host "`nExit."
+                exit 0
+            }
+
+            'Enter' {
+                if ($buffer -match '^\d+$') {
+                    $num = [int]$buffer
+                    if ($Map.ContainsKey($num)) {
+                        Write-Host ""
+                        return $num
+                    }
+                }
+            }
+
+            'Backspace' {
+                if ($buffer.Length -gt 0) {
+                    $buffer = $buffer.Substring(0, $buffer.Length - 1)
+                    Write-Host "`b `b" -NoNewline
+                }
+                elseif ($AllowBack) {
+                    Write-Host ""
+                    return "__BACK__"
+                }
+            }
+
+            default {
+                if ($key.KeyChar -match '\d') {
+                    $buffer += $key.KeyChar
+                    Write-Host $key.KeyChar -NoNewline
+                }
+            }
+        }
     }
 }
 
-Write-Host ""
-$choice = Read-Host "Enter number of host to connect to (or Enter for cancel)"
+while ($true) {
 
-if ([string]::IsNullOrWhiteSpace($choice)) {
-    Write-Host "Canceling."
-    exit 0
+    Clear-Host
+    Write-Host ""
+    Write-Host "Avaliable SSH connections (categories):" -ForegroundColor Cyan
+    Write-Host "--------------------------------------"
+
+    $catIndex = 1
+    $catMap = @{}
+
+    ($entries | Group-Object Category) | ForEach-Object {
+        Write-Host ("  [{0}] {1}" -f $catIndex, $_.Name) -ForegroundColor Yellow
+        $catMap[$catIndex] = $_.Name
+        $catIndex++
+    }
+
+    Write-Host ""
+    Write-Host "Select category number (Enter=confirm, Esc=exit): " -NoNewline
+
+    $catChoice = Read-MenuInput -Map $catMap
+    $selectedCategory = $catMap[$catChoice]
+
+    while ($true) {
+
+        Clear-Host
+        Write-Host ""
+        Write-Host ("Category: [{0}]" -f $selectedCategory) -ForegroundColor Yellow
+        Write-Host "Avaliable SSH connections:" -ForegroundColor Cyan
+        Write-Host "---------------------"
+
+        $index = 1
+        $indexMap = @{}
+
+        $entries | Where-Object { $_.Category -eq $selectedCategory } | ForEach-Object {
+            Write-Host ("  [{0}] {1}" -f $index, $_.Name)
+            $indexMap[$index] = $_.Name
+            $index++
+        }
+
+        Write-Host ""
+        Write-Host "Select host (Enter=connect, Backspace=categories, Esc=exit): " -NoNewline
+
+        $choice = Read-MenuInput -Map $indexMap -AllowBack
+
+        if ($choice -eq "__BACK__") {
+            break
+        }
+
+        $selectedHost = $indexMap[$choice]
+
+        Write-Host ""
+        Write-Host "Connecting to '$selectedHost'..." -ForegroundColor Green
+        Write-Host ""
+
+        ssh $selectedHost
+        exit 0
+    }
 }
-
-if (-not ($choice -as [int])) {
-    Write-Host "Invalide choice (non existing index)." -ForegroundColor Red
-    exit 1
-}
-
-$choice = [int]$choice
-
-if (-not $indexMap.ContainsKey($choice)) {
-    Write-Host "Invalide choice (index out of range)." -ForegroundColor Red
-    exit 1
-}
-
-$selectedHost = $indexMap[$choice]
-
-Write-Host ""
-Write-Host "Connecting to '$selectedHost'..." -ForegroundColor Green
-Write-Host ""
-
-ssh $selectedHost
-
